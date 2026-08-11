@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ws_combugasclientes", "ws_combugasclientes\ws_combugasclientes.csproj", "{CD7753A1-E1E1-4AFD-B58F-E650B65F4CC0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD7753A1-E1E1-4AFD-B58F-E650B65F4CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD7753A1-E1E1-4AFD-B58F-E650B65F4CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD7753A1-E1E1-4AFD-B58F-E650B65F4CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD7753A1-E1E1-4AFD-B58F-E650B65F4CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B6CA3C8-ABA8-426F-9196-CDD83CE8023C}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://andreaguerra.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ws_combugasclientes\\ws_combugasclientes.csproj
+		SccProjectName1 = ws_combugasclientes
+		SccLocalPath1 = ws_combugasclientes
+	EndGlobalSection
+EndGlobal

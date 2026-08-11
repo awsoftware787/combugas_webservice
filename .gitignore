@@ -1,0 +1,75 @@
+# Carpetas generadas por compilación
+bin/
+obj/
+
+# Configuración local de Visual Studio
+.vs/
+
+# Archivos de usuario
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de compilación
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Logs
+*.log
+
+# Paquetes NuGet restaurados
+packages/
+*.nupkg
+
+# Resultados de pruebas
+TestResults/
+
+# Publicaciones
+publish/
+
+# Visual Studio
+.vs/
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Archivos de usuario
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Compilación
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.iobj
+*.ipdb
+*.tmp
+*.log
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Pruebas
+TestResults/
+*.trx
+
+# Publicación
+publish/
+Published/
+
+# Configuración privada de cada entorno
+ws_combugasclientes/AppSettings.local.config
+ws_combugasclientes/ConnectionStrings.local.config
