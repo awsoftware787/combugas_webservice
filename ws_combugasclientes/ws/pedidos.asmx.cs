@@ -695,16 +695,21 @@ namespace ws_combugasclientes.ws
                     #region CILINDRERA
                     if (pedidoCilindrera.Count() > 0)
                     {
-                        int idRuta = (int)direccion.id_ruta;
-                        int tipoVehiculoC = calculaTipoUnidadPedido(soloCroquetas, 1);
-
                         #region consulta del operador
                         int turnoC = context.Turnos.Where(x => DateTime.Now.TimeOfDay >= x.horainicio & DateTime.Now.TimeOfDay <= x.horafin).SingleOrDefault().id_turno;
-                        var consultaAsignacionC = (
-                            from SQLAsignacion in context.Asignaciones
-                            where SQLAsignacion.id_ruta.Equals(idRuta) && SQLAsignacion.id_turno.Equals(turnoC) && SQLAsignacion.asignacion_activa.Equals(true)
-                            select SQLAsignacion
-                        ).OrderByDescending(x => x.id_operador).FirstOrDefault();
+                        int idServicioPedidoC = calculaIdServicio(pedidoCilindrera, context);
+                        int tipoVehiculoC;
+                        int idRuta;
+                        Asignaciones consultaAsignacionC = resuelveAsignacionPedido(
+                            direccion,
+                            idServicioPedidoC,
+                            1,
+                            1,
+                            turnoC,
+                            context,
+                            out tipoVehiculoC,
+                            out idRuta
+                        );
 
                         int? idOperadorC = 0;
                         if (consultaAsignacionC != null)
@@ -733,7 +738,7 @@ namespace ws_combugasclientes.ws
                         nuevoPedidoCil.Id_Metodo_Pago = _intIdMetodoPago;
                         nuevoPedidoCil.Id_Actitud = 7;
                         nuevoPedidoCil.fase = "RADIOS";
-                        nuevoPedidoCil.Id_Servicio = calculaIdServicio(pedidoCilindrera, context);
+                        nuevoPedidoCil.Id_Servicio = idServicioPedidoC;
                         nuevoPedidoCil.No_Llamadas = 0;
                         nuevoPedidoCil.Pedido_confirmado_operador = false;
                         nuevoPedidoCil.Pedido_confirmado_cliente = false;
@@ -1083,14 +1088,21 @@ namespace ws_combugasclientes.ws
                     #region ESTACIONARIO
                     if (pedidoEstacionario.Count() > 0)
                     {
-                        int idRuta = traeRutaAutotanque((double)direccion.latitud, (double)direccion.longitud);
                         #region consulta del operador
                         int turnoE = context.Turnos.Where(x => DateTime.Now.TimeOfDay >= x.horainicio & DateTime.Now.TimeOfDay <= x.horafin).SingleOrDefault().id_turno;
-                        var consultaAsignacion = (
-                            from SQLAsignacion in context.Asignaciones
-                            where SQLAsignacion.id_ruta.Equals(idRuta) && SQLAsignacion.id_turno.Equals(turnoE) && SQLAsignacion.asignacion_activa.Equals(true)
-                            select SQLAsignacion
-                        ).OrderByDescending(x => x.id_operador).FirstOrDefault();
+                        int idServicioPedidoE = calculaIdServicio(pedidoEstacionario, context);
+                        int tipoVehiculo;
+                        int idRuta;
+                        Asignaciones consultaAsignacion = resuelveAsignacionPedido(
+                            direccion,
+                            idServicioPedidoE,
+                            2,
+                            2,
+                            turnoE,
+                            context,
+                            out tipoVehiculo,
+                            out idRuta
+                        );
 
                         int? idOperadorE = 0;
                         if (consultaAsignacion != null)
@@ -1119,7 +1131,7 @@ namespace ws_combugasclientes.ws
                         nuevoPedidoE.Id_Metodo_Pago = _intIdMetodoPago;
                         nuevoPedidoE.Id_Actitud = 7;
                         nuevoPedidoE.fase = "RADIOS";
-                        nuevoPedidoE.Id_Servicio = calculaIdServicio(pedidoEstacionario, context);
+                        nuevoPedidoE.Id_Servicio = idServicioPedidoE;
                         nuevoPedidoE.No_Llamadas = 0;
                         nuevoPedidoE.Pedido_confirmado_operador = false;
                         nuevoPedidoE.Pedido_confirmado_cliente = false;
@@ -1143,7 +1155,6 @@ namespace ws_combugasclientes.ws
                         idpedidoguardado = jsonSerializer.Serialize(nuevoPedidoE.Id_Pedido);
 
                         #region insercion de los detalles
-                        int tipoVehiculo = 2;
                         List<Pedido_Detalle> detallePedidoE = new List<Pedido_Detalle>();
                         foreach (objDetalle item in pedidoEstacionario)
                         {
@@ -1457,15 +1468,21 @@ namespace ws_combugasclientes.ws
                     #region AWA
                     if (pedidoAwa.Count > 0)
                     {
-                        int idRuta = traeRutaAwa(_intIdDireccion);
-
                         #region consulta del operador
                         int turnoC = context.Turnos.Where(x => DateTime.Now.TimeOfDay >= x.horainicio & DateTime.Now.TimeOfDay <= x.horafin).SingleOrDefault().id_turno;
-                        var consultaAsignacionC = (
-                            from SQLAsignacion in context.Asignaciones
-                            where SQLAsignacion.id_ruta.Equals(idRuta) && SQLAsignacion.id_turno.Equals(turnoC) && SQLAsignacion.asignacion_activa.Equals(true)
-                            select SQLAsignacion
-                        ).OrderByDescending(x => x.id_operador).FirstOrDefault();
+                        int idServicioPedidoAwa = calculaIdServicio(pedidoAwa, context);
+                        int tipoVehiculoC;
+                        int idRuta;
+                        Asignaciones consultaAsignacionC = resuelveAsignacionPedido(
+                            direccion,
+                            idServicioPedidoAwa,
+                            1,
+                            3,
+                            turnoC,
+                            context,
+                            out tipoVehiculoC,
+                            out idRuta
+                        );
 
                         int? idOperadorC = 0;
                         if (consultaAsignacionC != null)
@@ -1494,7 +1511,7 @@ namespace ws_combugasclientes.ws
                         nuevoPedidoAwa.Id_Metodo_Pago = _intIdMetodoPago;
                         nuevoPedidoAwa.Id_Actitud = 7;
                         nuevoPedidoAwa.fase = "RADIOS";
-                        nuevoPedidoAwa.Id_Servicio = calculaIdServicio(pedidoAwa, context);
+                        nuevoPedidoAwa.Id_Servicio = idServicioPedidoAwa;
                         nuevoPedidoAwa.No_Llamadas = 0;
                         nuevoPedidoAwa.Pedido_confirmado_operador = false;
                         nuevoPedidoAwa.Pedido_confirmado_cliente = false;
@@ -1518,7 +1535,6 @@ namespace ws_combugasclientes.ws
                         idpedidoguardado = jsonSerializer.Serialize(nuevoPedidoAwa.Id_Pedido);
 
                         #region insercion de los detalles
-                        int tipoVehiculoC = 1;
                         List<Pedido_Detalle> detallePedidoAwa = new List<Pedido_Detalle>();
                         foreach (objDetalle item in pedidoAwa)
                         {
@@ -1926,9 +1942,116 @@ namespace ws_combugasclientes.ws
             return "PRODUCTO_VALIDO";
         }
 
-        private static int calculaTipoUnidadPedido(bool soloCroquetas, int tipoUnidadActual)
+        private Asignaciones resuelveAsignacionPedido(
+            Direccion direccion,
+            int idServicio,
+            int tipoUnidadPredeterminado,
+            int idTipoRuta,
+            int idTurno,
+            ContextCombugasDataContext context,
+            out int idTipoUnidad,
+            out int idRuta)
         {
-            return soloCroquetas ? 1 : tipoUnidadActual;
+            idRuta = 0;
+
+            int? tipoUnidadConfigurado = context.servicioUnidad
+                .Where(x => x.id_servicio == idServicio && x.status == true)
+                .OrderByDescending(x => x.id)
+                .Select(x => (int?)x.id_tipounidad)
+                .FirstOrDefault();
+
+            int tipoUnidadResuelto = tipoUnidadConfigurado ?? tipoUnidadPredeterminado;
+            idTipoUnidad = tipoUnidadResuelto;
+
+            bool unidadActiva = context.TipoUnidad.Any(x =>
+                x.id_tipounidad == tipoUnidadResuelto &&
+                x.status == true
+            );
+            if (!unidadActiva)
+            {
+                return null;
+            }
+
+            List<Asignaciones> asignacionesCompatibles = context.Asignaciones
+                .Where(x =>
+                    x.id_turno == idTurno &&
+                    x.asignacion_activa == true &&
+                    x.Rutas.estatus == true &&
+                    x.Rutas.id_tipo_ruta == idTipoRuta &&
+                    x.truck.status == true &&
+                    x.truck.id_tipounidad == tipoUnidadResuelto
+                )
+                .OrderByDescending(x => x.id_asignacion)
+                .ToList();
+
+            if (asignacionesCompatibles.Count == 0)
+            {
+                return null;
+            }
+
+            if (direccion.id_ruta.HasValue)
+            {
+                Asignaciones asignacionRutaDireccion = asignacionesCompatibles
+                    .FirstOrDefault(x => x.id_ruta == direccion.id_ruta.Value);
+                if (asignacionRutaDireccion != null)
+                {
+                    idRuta = asignacionRutaDireccion.id_ruta;
+                    return asignacionRutaDireccion;
+                }
+            }
+
+            if (!direccion.latitud.HasValue || !direccion.longitud.HasValue)
+            {
+                return null;
+            }
+
+            List<int> rutasConUnidadCompatible = asignacionesCompatibles
+                .Select(x => x.id_ruta)
+                .Distinct()
+                .ToList();
+
+            List<Rutas> rutas = context.Rutas
+                .Where(x => rutasConUnidadCompatible.Contains(x.id_ruta))
+                .ToList();
+
+            Loc coordenadasDireccion = new Loc(direccion.latitud.Value, direccion.longitud.Value);
+            foreach (var ruta in rutas)
+            {
+                List<Loc> puntos = ruta.GeoRuta
+                    .Select(x => new Loc(x.latitud, x.longitud))
+                    .ToList();
+
+                if (puntos.Count > 0 && IsPointInPolygon(puntos, coordenadasDireccion))
+                {
+                    int rutaSeleccionada = ruta.id_ruta;
+                    idRuta = rutaSeleccionada;
+                    return asignacionesCompatibles.First(x => x.id_ruta == rutaSeleccionada);
+                }
+            }
+
+            var rutaMasCercana = rutas
+                .SelectMany(ruta => ruta.GeoRuta.Select(punto => new
+                {
+                    ruta.id_ruta,
+                    distancia = new System.Device.Location.GeoCoordinate(
+                        direccion.latitud.Value,
+                        direccion.longitud.Value
+                    ).GetDistanceTo(new System.Device.Location.GeoCoordinate(
+                        punto.latitud,
+                        punto.longitud
+                    ))
+                }))
+                .OrderBy(x => x.distancia)
+                .FirstOrDefault();
+
+            if (rutaMasCercana == null)
+            {
+                return null;
+            }
+
+            int rutaCercanaSeleccionada = rutaMasCercana.id_ruta;
+            idRuta = rutaCercanaSeleccionada;
+            return asignacionesCompatibles.First(x => x.id_ruta == rutaCercanaSeleccionada);
         }
 
         private static bool esProductoAguaEspecial(int idProducto)
