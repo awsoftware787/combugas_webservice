@@ -12,6 +12,7 @@ Servicio web ASP.NET clásico (`.asmx`) desarrollado en C# y dirigido a **.NET F
 - NuGet (incluido en Visual Studio).
 - Para ejecutar el servicio: IIS Express (incluido con la carga de trabajo web).
 - Para usar las funciones que consultan datos: una instancia de SQL Server con la base de datos correspondiente y credenciales de acceso.
+- Para enviar notificaciones SMS: una cuenta de Twilio con un Account SID y un Auth Token activos.
 
 ## Configuración para la primera compilación
 
@@ -76,7 +77,7 @@ La base de datos no es necesaria para que MSBuild genere el ensamblado, pero sí
 
 Los datos de cada entorno no se guardan directamente en [Web.config](ws_combugasclientes/Web.config). Ese archivo carga dos archivos locales mediante `configSource`:
 
-- `AppSettings.local.config`: URL, puerto, clave de Maps y opciones del sitio.
+- `AppSettings.local.config`: URL, puerto, claves de Maps y Twilio, y opciones del sitio.
 - `ConnectionStrings.local.config`: conexiones de SQL Server.
 
 Estos archivos están excluidos por `.gitignore` y deben entregarse al desarrollador por un medio seguro. Para crear una configuración nueva a partir de las plantillas:
@@ -88,7 +89,28 @@ Copy-Item .\ws_combugasclientes\ConnectionStrings.example.config .\ws_combugascl
 
 Después reemplaza todos los valores `REEMPLAZAR_*`. No agregues contraseñas, tokens, rutas ni URLs privadas a los archivos `*.example.config`.
 
-### 2. Configurar SQL Server
+### 2. Configurar Twilio
+
+El servicio utiliza Twilio para enviar notificaciones SMS desde `Operadores.asmx.cs`. Obtén un **Account SID** y un **Auth Token** activos desde la consola de la cuenta de Twilio y agrégalos únicamente a `ws_combugasclientes\AppSettings.local.config`:
+
+```xml
+<add key="TWILIO_ACCOUNT_SID" value="TU_ACCOUNT_SID" />
+<add key="TWILIO_AUTH_TOKEN" value="TU_AUTH_TOKEN" />
+```
+
+El archivo debe conservar un solo elemento raíz `<appSettings>` y ambas entradas deben quedar dentro de él. Si creaste el archivo copiando `AppSettings.example.config`, reemplaza los valores `REEMPLAZAR_ACCOUNT_SID` y `REEMPLAZAR_AUTH_TOKEN`.
+
+Estas credenciales no deben escribirse directamente en archivos `.cs`, `Web.config`, archivos de ejemplo ni otros archivos versionados. `AppSettings.local.config` está excluido por `.gitignore`; compruébalo antes de hacer commit con:
+
+```powershell
+git check-ignore -v .\ws_combugasclientes\AppSettings.local.config
+```
+
+Si un token aparece accidentalmente en Git, rótalo inmediatamente desde Twilio y elimina el valor de todos los commits afectados. Permitir el secreto mediante el enlace de desbloqueo de GitHub no sustituye la rotación.
+
+Después de cambiar las credenciales, reinicia IIS Express y prueba una operación que envíe un SMS. No reutilices el Auth Token que originó una alerta de GitHub; genera y configura uno nuevo.
+
+### 3. Configurar SQL Server
 
 Edita `ws_combugasclientes\ConnectionStrings.local.config`. Como mínimo, revisa las conexiones principales:
 
@@ -107,7 +129,7 @@ Usa el nombre real de tu instancia y base de datos. La identidad con la que se e
 
 > El repositorio no incluye scripts para crear o poblar la base de datos. Debes solicitar un respaldo o los scripts de esquema/datos al responsable del proyecto.
 
-### 3. Alinear la URL y el puerto local
+### 4. Alinear la URL y el puerto local
 
 El proyecto declara actualmente la URL de IIS Express `http://localhost:52665/` en el archivo `.csproj`. Configura los valores correspondientes en `AppSettings.local.config`:
 
@@ -118,7 +140,7 @@ El proyecto declara actualmente la URL de IIS Express `http://localhost:52665/` 
 
 Antes de probar operaciones que construyan URLs hacia el propio servicio, haz que ambos puertos coincidan. Puedes cambiar `PUERTOSITIO` al puerto asignado por Visual Studio o modificar la URL del proyecto desde **Propiedades > Web**.
 
-### 4. Iniciar y comprobar el servicio
+### 5. Iniciar y comprobar el servicio
 
 1. Haz clic derecho en `ws_combugasclientes` y selecciona **Establecer como proyecto de inicio**.
 2. Inicia con **IIS Express** (`F5` o `Ctrl+F5`).
@@ -159,6 +181,17 @@ Verifica que:
 - la base de datos exista;
 - la autenticación indicada por la cadena esté habilitada; y
 - el usuario tenga permisos sobre la base.
+
+### Twilio no envía mensajes
+
+Comprueba que:
+
+- `TWILIO_ACCOUNT_SID` y `TWILIO_AUTH_TOKEN` existan en `AppSettings.local.config` y no conserven valores `REEMPLAZAR_*` ni valores vacíos;
+- el Auth Token siga activo y corresponda al mismo Account SID;
+- la cuenta y el número remitente de Twilio estén habilitados para el destino; y
+- IIS Express se haya reiniciado después de actualizar el archivo de configuración.
+
+Un error de autenticación requiere configurar credenciales válidas; nunca copies el token al código fuente para intentar resolverlo.
 
 ### El endpoint no abre o usa un puerto incorrecto
 
