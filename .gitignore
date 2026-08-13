@@ -69,6 +69,7 @@ TestResults/
 # Publicación
 publish/
 Published/
+Publicacion_Test/
 
 # Configuración privada de cada entorno
 ws_combugasclientes/AppSettings.local.config
