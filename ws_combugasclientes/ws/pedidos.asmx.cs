@@ -1960,8 +1960,12 @@ namespace ws_combugasclientes.ws
                 .Select(x => (int?)x.id_tipounidad)
                 .FirstOrDefault();
 
-            int tipoUnidadResuelto = tipoUnidadConfigurado ?? tipoUnidadPredeterminado;
-            idTipoUnidad = tipoUnidadResuelto;
+            //int tipoUnidadResuelto = tipoUnidadConfigurado ?? tipoUnidadPredeterminado;
+            //tipoUnidadResuelto = tipoUnidadResuelto == 9 ? 1 : tipoUnidadResuelto;
+            int tipoUnidadResuelto = (tipoUnidadConfigurado ?? tipoUnidadPredeterminado) == 9
+                ? 1
+                : (tipoUnidadConfigurado ?? tipoUnidadPredeterminado);
+            idTipoUnidad = tipoUnidadResuelto == 9 ? 1 : tipoUnidadResuelto;
 
             bool unidadActiva = context.TipoUnidad.Any(x =>
                 x.id_tipounidad == tipoUnidadResuelto &&
