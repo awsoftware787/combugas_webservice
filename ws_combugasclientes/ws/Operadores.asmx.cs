@@ -918,6 +918,7 @@ namespace ws_combugasclientes.ws
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 var accountSid = ConfigurationManager.AppSettings["TWILIO_ACCOUNT_SID"];
                 var authToken = ConfigurationManager.AppSettings["TWILIO_AUTH_TOKEN"];
+
                 TwilioClient.Init(accountSid, authToken);
 
                 var message = MessageResource.Create(
@@ -1962,7 +1963,7 @@ namespace ws_combugasclientes.ws
 
             soapEnvelopeXml.LoadXml(bodyXML);
 
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://finlag.dyndns.org/wscombugas/WSCombugas.asmx");
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://comercios.valetodo.com/wscombugas/wscombugas.asmx");
             webRequest.Headers.Add("SOAPAction", "http://tempuri.org/RegistrarPedidoRepartidor");
             webRequest.ContentType = "text/xml; charset=utf-8";
             webRequest.Method = "POST";
@@ -2078,7 +2079,7 @@ namespace ws_combugasclientes.ws
 
                                     soapEnvelopeXml.LoadXml(bodyXML);
 
-                                    HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://finlag.dyndns.org/wscombugas/WSCombugas.asmx");
+                                    HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://comercios.valetodo.com/wscombugas/wscombugas.asmx");
                                     webRequest.Headers.Add("SOAPAction", "http://tempuri.org/RegistrarPedidoRepartidor");
                                     webRequest.ContentType = "text/xml; charset=utf-8";
                                     webRequest.Method = "POST";
@@ -3882,7 +3883,7 @@ namespace ws_combugasclientes.ws
 
                 soapEnvelopeXml.LoadXml(bodyXML);
 
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://finlag.dyndns.org/wscombugas/WSCombugas.asmx");
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("https://comercios.valetodo.com/wscombugas/wscombugas.asmx");
                 webRequest.Headers.Add("SOAPAction", "http://tempuri.org/ValidacionLibre");
                 webRequest.ContentType = "text/xml; charset=utf-8";
                 webRequest.Method = "POST";
