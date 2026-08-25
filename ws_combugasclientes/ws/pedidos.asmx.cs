@@ -1476,7 +1476,7 @@ namespace ws_combugasclientes.ws
                         Asignaciones consultaAsignacionC = resuelveAsignacionPedido(
                             direccion,
                             idServicioPedidoAwa,
-                            1,
+                            3,
                             3,
                             turnoC,
                             context,
@@ -1954,18 +1954,16 @@ namespace ws_combugasclientes.ws
         {
             idRuta = 0;
 
-            int? tipoUnidadConfigurado = context.servicioUnidad
-                .Where(x => x.id_servicio == idServicio && x.status == true)
-                .OrderByDescending(x => x.id)
-                .Select(x => (int?)x.id_tipounidad)
-                .FirstOrDefault();
+            //int? tipoUnidadConfigurado = context.servicioUnidad
+            //    .Where(x => x.id_servicio == idServicio && x.status == true)
+            //    .OrderByDescending(x => x.id)
+            //    .Select(x => (int?)x.id_tipounidad)
+            //    .FirstOrDefault();
 
             //int tipoUnidadResuelto = tipoUnidadConfigurado ?? tipoUnidadPredeterminado;
             //tipoUnidadResuelto = tipoUnidadResuelto == 9 ? 1 : tipoUnidadResuelto;
-            int tipoUnidadResuelto = (tipoUnidadConfigurado ?? tipoUnidadPredeterminado) == 9
-                ? 1
-                : (tipoUnidadConfigurado ?? tipoUnidadPredeterminado);
-            idTipoUnidad = tipoUnidadResuelto == 9 ? 1 : tipoUnidadResuelto;
+            int tipoUnidadResuelto = tipoUnidadPredeterminado;
+            idTipoUnidad = tipoUnidadResuelto;
 
             bool unidadActiva = context.TipoUnidad.Any(x =>
                 x.id_tipounidad == tipoUnidadResuelto &&
