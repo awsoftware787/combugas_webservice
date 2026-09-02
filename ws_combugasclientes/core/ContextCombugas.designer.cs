@@ -724,6 +724,14 @@ namespace ws_combugasclientes.core
 			}
 		}
 
+		public System.Data.Linq.Table<tipo_producto> tipo_producto
+		{
+			get
+			{
+				return this.GetTable<tipo_producto>();
+			}
+		}
+
 		public System.Data.Linq.Table<Quejas_Fugas> Quejas_Fugas
 		{
 			get
@@ -14651,6 +14659,10 @@ namespace ws_combugasclientes.core
 
 		private System.Nullable<decimal> _precio_kilo;
 
+		private System.Nullable<int> _id_tipo_producto;
+
+		private string _url_icono;
+
 		private EntitySet<asig_cliente_producto> _asig_cliente_producto;
 
 		private EntitySet<Pedido_Detalle> _Pedido_Detalle;
@@ -14681,6 +14693,10 @@ namespace ws_combugasclientes.core
 		partial void Onfecha_finChanged();
 		partial void Onprecio_kiloChanging(System.Nullable<decimal> value);
 		partial void Onprecio_kiloChanged();
+		partial void Onid_tipo_productoChanging(System.Nullable<int> value);
+		partial void Onid_tipo_productoChanged();
+		partial void Onurl_iconoChanging(string value);
+		partial void Onurl_iconoChanged();
 		#endregion
 
 		public producto()
@@ -14899,6 +14915,46 @@ namespace ws_combugasclientes.core
 			}
 		}
 
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_id_tipo_producto", DbType = "Int")]
+		public System.Nullable<int> id_tipo_producto
+		{
+			get
+			{
+				return this._id_tipo_producto;
+			}
+			set
+			{
+				if ((this._id_tipo_producto != value))
+				{
+					this.Onid_tipo_productoChanging(value);
+					this.SendPropertyChanging();
+					this._id_tipo_producto = value;
+					this.SendPropertyChanged("id_tipo_producto");
+					this.Onid_tipo_productoChanged();
+				}
+			}
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_url_icono", DbType = "NVarChar(500)")]
+		public string url_icono
+		{
+			get
+			{
+				return this._url_icono;
+			}
+			set
+			{
+				if ((this._url_icono != value))
+				{
+					this.Onurl_iconoChanging(value);
+					this.SendPropertyChanging();
+					this._url_icono = value;
+					this.SendPropertyChanged("url_icono");
+					this.Onurl_iconoChanged();
+				}
+			}
+		}
+
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name = "producto_asig_cliente_producto", Storage = "_asig_cliente_producto", ThisKey = "id_producto", OtherKey = "id_producto")]
 		public EntitySet<asig_cliente_producto> asig_cliente_producto
 		{
@@ -15001,6 +15057,35 @@ namespace ws_combugasclientes.core
 		{
 			this.SendPropertyChanging();
 			entity.producto = null;
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.tipo_producto")]
+	public partial class tipo_producto
+	{
+		private int _id_tipo_producto;
+		private string _descripcion;
+		private System.Nullable<bool> _status;
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_id_tipo_producto", AutoSync = AutoSync.OnInsert, DbType = "Int NOT NULL IDENTITY", IsPrimaryKey = true, IsDbGenerated = true)]
+		public int id_tipo_producto
+		{
+			get { return this._id_tipo_producto; }
+			set { this._id_tipo_producto = value; }
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_descripcion", DbType = "NVarChar(200)")]
+		public string descripcion
+		{
+			get { return this._descripcion; }
+			set { this._descripcion = value; }
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_status", DbType = "Bit")]
+		public System.Nullable<bool> status
+		{
+			get { return this._status; }
+			set { this._status = value; }
 		}
 	}
 

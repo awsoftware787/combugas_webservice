@@ -177,6 +177,7 @@
       <DependentUpon>test.dbml</DependentUpon>
     </Compile>
     <Compile Include="core\ajaxResponse.cs" />
+    <Compile Include="core\ProductoIconUrlBuilder.cs" />
     <Compile Include="core\ContextCombugas.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

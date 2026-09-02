@@ -11,6 +11,8 @@ using System.Web.Services;
 using ws_combugasclientes.core;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Configuration;
+using System.Web;
 using System.Web.Script.Services;
 
 namespace ws_combugasclientes.ws
@@ -30,57 +32,97 @@ namespace ws_combugasclientes.ws
         {
             ajaxResponse Response = new ajaxResponse();
             var jsonSerializer = new JavaScriptSerializer();
-            ContextCombugasDataContext context = new ContextCombugasDataContext();
-            try
+            using (ContextCombugasDataContext context = new ContextCombugasDataContext())
             {
+                try
+                {
+                    var montos = (from i in context.montominimo_estacionario
+                                  where i.id == 1
+                                  select new
+                                  {
+                                      i.montominimo_dinero,
+                                      i.montominimo_litros
+                                  }).FirstOrDefault();
 
-                var montos = (from i in context.montominimo_estacionario
-                              where i.id == 1
-                              select new
-                              {
-                                  i.montominimo_dinero,
-                                  i.montominimo_litros
-                              }).FirstOrDefault();
+                    decimal monto_minimo = montos == null ? 0m : (decimal)montos.montominimo_dinero;
+                    decimal litros_minimo = montos == null ? 0m : (decimal)montos.montominimo_litros;
 
-                decimal monto_minimo = (decimal)montos.montominimo_dinero;
-                decimal litros_minimo = (decimal)montos.montominimo_litros;
+                    // El LEFT JOIN conserva productos históricos que aún no tienen tipo asignado.
+                    // La consulta se materializa una sola vez para evitar consultas por producto.
+                    var productos = (from producto in context.producto
+                                     join tipoProducto in context.tipo_producto
+                                         on producto.id_tipo_producto equals (int?)tipoProducto.id_tipo_producto
+                                         into tiposProducto
+                                     from tipoProducto in tiposProducto.DefaultIfEmpty()
+                                     where producto.status == true
+                                     select new
+                                     {
+                                         producto.id_producto,
+                                         producto.id_servicio,
+                                         producto.id_tipo_producto,
+                                         tipo_producto = tipoProducto == null ? null : tipoProducto.descripcion,
+                                         producto.descripcion,
+                                         producto.precio,
+                                         producto.url_icono
+                                     }).ToList();
 
-                var precios = (
-                    from SQLPrecios in context.producto
-                    where SQLPrecios.status.Equals(true)
-                    select new
+                    if (productos.Any())
                     {
-                        _idProducto = SQLPrecios.id_producto,
-                        _idServicio = SQLPrecios.id_servicio,
-                        _descripcionProducto = SQLPrecios.descripcion,
-                        _precioProducto = SQLPrecios.precio,
-                        _montoMinimoEst = monto_minimo,
-                        _litroMinimoEst = litros_minimo
+                        var precios = productos.Select(producto => new
+                        {
+                            _idProducto = producto.id_producto,
+                            _idServicio = producto.id_servicio,
+                            _idTipoProducto = producto.id_tipo_producto,
+                            _tipoProducto = producto.tipo_producto,
+                            _descripcionProducto = producto.descripcion,
+                            _precioProducto = producto.precio,
+                            _urlIcono = ObtenerUrlPublicaIcono(producto.url_icono),
+                            _montoMinimoEst = monto_minimo,
+                            _litroMinimoEst = litros_minimo
+                        }).ToList();
+
+                        Response.Result = true;
+                        Response.Message = "PROD";
+                        Response.Data = jsonSerializer.Serialize(precios);
                     }
-                );
-                if (precios != null)
-                {
-                    var jsonProd = jsonSerializer.Serialize(precios);
-                    Response.Result = true;
-                    Response.Message = "PROD";
-                    Response.Data = jsonProd;
+                    else
+                    {
+                        Response.Result = false;
+                        Response.Message = "NOPROD";
+                        Response.Data = jsonSerializer.Serialize("NO SE ENCONTRARON PRODUCTOS");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    var jsonNoProd = jsonSerializer.Serialize("NO SE ENCONTRARON PRODUCTOS");
+                    var jsonNoProd = jsonSerializer.Serialize("ERROR :" + ex.Message);
                     Response.Result = false;
                     Response.Message = "NOPROD";
                     Response.Data = jsonNoProd;
                 }
             }
-            catch (Exception ex)
-            {
-                var jsonNoProd = jsonSerializer.Serialize("ERROR :" + ex.Message);
-                Response.Result = false;
-                Response.Message = "NOPROD";
-                Response.Data = jsonNoProd;
-            }
             return Response;
+        }
+
+        private string ObtenerUrlPublicaIcono(string urlIcono)
+        {
+            string urlPublica = ConfigurationManager.AppSettings["UrlPublica"];
+            string iconoPredeterminado = ConfigurationManager.AppSettings["IconoProductoPredeterminado"];
+            HttpRequest request = HttpContext.Current == null ? null : HttpContext.Current.Request;
+
+            // Compatibilidad con la configuración histórica que apunta al sitio que hospeda /Images.
+            if (string.IsNullOrWhiteSpace(urlPublica))
+            {
+                urlPublica = string.Concat(
+                    ConfigurationManager.AppSettings["URLSITIO"],
+                    ConfigurationManager.AppSettings["PUERTOSITIO"]);
+            }
+
+            return ProductoIconUrlBuilder.Build(
+                urlIcono,
+                urlPublica,
+                request == null ? null : request.Url,
+                request == null ? null : request.ApplicationPath,
+                iconoPredeterminado);
         }
 
         [WebMethod]
