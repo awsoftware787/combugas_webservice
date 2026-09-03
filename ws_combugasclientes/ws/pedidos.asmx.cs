@@ -48,13 +48,18 @@ namespace ws_combugasclientes.ws
                     decimal litros_minimo = montos == null ? 0m : (decimal)montos.montominimo_litros;
 
                     // El LEFT JOIN conserva productos históricos que aún no tienen tipo asignado.
+                    // Un status nulo se considera disponible; solo se omiten productos
+                    // marcados explícitamente como inactivos.
                     // La consulta se materializa una sola vez para evitar consultas por producto.
                     var productos = (from producto in context.producto
                                      join tipoProducto in context.tipo_producto
                                          on producto.id_tipo_producto equals (int?)tipoProducto.id_tipo_producto
                                          into tiposProducto
                                      from tipoProducto in tiposProducto.DefaultIfEmpty()
-                                     where producto.status == true
+                                     where producto.status == null || producto.status == true
+                                     orderby producto.id_servicio,
+                                             producto.id_tipo_producto,
+                                             producto.id_producto
                                      select new
                                      {
                                          producto.id_producto,
