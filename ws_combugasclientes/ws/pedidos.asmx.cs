@@ -56,7 +56,8 @@ namespace ws_combugasclientes.ws
                                          on producto.id_tipo_producto equals (int?)tipoProducto.id_tipo_producto
                                          into tiposProducto
                                      from tipoProducto in tiposProducto.DefaultIfEmpty()
-                                     where producto.status == null || producto.status == true
+                                     where (producto.status != null && producto.status == true)
+                                     && producto.visible_app == true
                                      orderby producto.id_servicio,
                                              producto.id_tipo_producto,
                                              producto.id_producto

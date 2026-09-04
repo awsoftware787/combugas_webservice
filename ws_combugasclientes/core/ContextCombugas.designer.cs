@@ -14653,6 +14653,8 @@ namespace ws_combugasclientes.core
 
 		private System.Nullable<bool> _status;
 
+		private System.Nullable<bool> _visible_app;
+
 		private System.Nullable<System.DateTime> _fecha_inicio;
 
 		private System.Nullable<System.DateTime> _fecha_fin;
@@ -14687,6 +14689,8 @@ namespace ws_combugasclientes.core
 		partial void OnaltaChanged();
 		partial void OnstatusChanging(System.Nullable<bool> value);
 		partial void OnstatusChanged();
+		partial void Onvisible_appChanging(System.Nullable<bool> value);
+		partial void Onvisible_appChanged();
 		partial void Onfecha_inicioChanging(System.Nullable<System.DateTime> value);
 		partial void Onfecha_inicioChanged();
 		partial void Onfecha_finChanging(System.Nullable<System.DateTime> value);
@@ -14851,6 +14855,26 @@ namespace ws_combugasclientes.core
 					this._status = value;
 					this.SendPropertyChanged("status");
 					this.OnstatusChanged();
+				}
+			}
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_visible_app", DbType = "Bit")]
+		public System.Nullable<bool> visible_app
+		{
+			get
+			{
+				return this._visible_app;
+			}
+			set
+			{
+				if ((this._visible_app != value))
+				{
+					this.Onvisible_appChanging(value);
+					this.SendPropertyChanging();
+					this._visible_app = value;
+					this.SendPropertyChanged("visible_app");
+					this.Onvisible_appChanged();
 				}
 			}
 		}
