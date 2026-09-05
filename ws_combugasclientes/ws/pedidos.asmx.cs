@@ -944,8 +944,7 @@ namespace ws_combugasclientes.ws
                         asignapedidoC.creado = hoyfecha;
                         asignapedidoC.hora = hoyhora;
                         asignapedidoC.status = true;
-                        context.Asigna_Pedido.InsertOnSubmit(asignapedidoC);
-                        context.SubmitChanges();
+                        guardaAsignacionConVentaRepartidor(context, asignapedidoC, detallePedidoC);
                         #endregion
 
                         #region movimientos pedidos
@@ -1319,8 +1318,7 @@ namespace ws_combugasclientes.ws
                         asignapedido.creado = hoyfecha;
                         asignapedido.hora = hoyhora;
                         asignapedido.status = true;
-                        context.Asigna_Pedido.InsertOnSubmit(asignapedido);
-                        context.SubmitChanges();
+                        guardaAsignacionConVentaRepartidor(context, asignapedido, detallePedidoE);
                         #endregion
 
                         #region movimientos pedidos
@@ -1717,8 +1715,7 @@ namespace ws_combugasclientes.ws
                         asignapedidoC.creado = hoyfecha;
                         asignapedidoC.hora = hoyhora;
                         asignapedidoC.status = true;
-                        context.Asigna_Pedido.InsertOnSubmit(asignapedidoC);
-                        context.SubmitChanges();
+                        guardaAsignacionConVentaRepartidor(context, asignapedidoC, detallePedidoAwa);
                         #endregion
 
                         #region movimientos pedidos
@@ -1988,6 +1985,58 @@ namespace ws_combugasclientes.ws
             }
 
             return "PRODUCTO_VALIDO";
+        }
+
+        private void guardaAsignacionConVentaRepartidor(
+            ContextCombugasDataContext context,
+            Asigna_Pedido asignacion,
+            List<Pedido_Detalle> detalles)
+        {
+            // Usar los detalles calculados: en estacionario la app puede pedir por importe.
+            int cilindros30 = detalles.Where(x => x.Id_producto == 2).Sum(x => Convert.ToInt32(x.cantidad));
+            int cilindros45 = detalles.Where(x => x.Id_producto == 3).Sum(x => Convert.ToInt32(x.cantidad));
+            int garrafones = detalles.Where(x => x.Id_producto == 4).Sum(x => Convert.ToInt32(x.cantidad));
+            int garrafonesAlkalinos = detalles.Where(x => x.Id_producto == 7).Sum(x => Convert.ToInt32(x.cantidad));
+            int six500 = detalles.Where(x => x.Id_producto == 8).Sum(x => Convert.ToInt32(x.cantidad));
+            int sixLitro = detalles.Where(x => x.Id_producto == 10).Sum(x => Convert.ToInt32(x.cantidad));
+            int six500Alkalino = detalles.Where(x => x.Id_producto == 14).Sum(x => Convert.ToInt32(x.cantidad));
+            double litros = detalles.Where(x => x.Id_producto == 9).Sum(x => x.litros_a_surtir ?? 0);
+
+            bool abrirConexion = context.Connection.State == System.Data.ConnectionState.Closed;
+            if (abrirConexion)
+                context.Connection.Open();
+
+            try
+            {
+                using (var transaccion = context.Connection.BeginTransaction())
+                {
+                    context.Transaction = transaccion;
+                    // El bloqueo de rango evita insertar dos registros para el mismo pedido.
+                    // Si ya existe, conservar sus cantidades y su estado de venta.
+                    context.ExecuteCommand(@"
+                        INSERT INTO dbo.ventas_repartidor
+                            (id_pedido, id_operador, fecha, es_venta,
+                             cil_t_a, cil_c_a, awa_g_a, awa_alk_g_a,
+                             six_500_a, six_l_a, six_500_alk_a, lit_e_a)
+                        SELECT {0}, {1}, {2}, 0, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}
+                        WHERE NOT EXISTS (
+                            SELECT 1 FROM dbo.ventas_repartidor WITH (UPDLOCK, HOLDLOCK)
+                            WHERE id_pedido = {0})",
+                        asignacion.id_pedido, asignacion.id_operador,
+                        asignacion.creado, cilindros30, cilindros45, garrafones,
+                        garrafonesAlkalinos, six500, sixLitro, six500Alkalino, litros);
+
+                    context.Asigna_Pedido.InsertOnSubmit(asignacion);
+                    context.SubmitChanges();
+                    transaccion.Commit();
+                }
+            }
+            finally
+            {
+                context.Transaction = null;
+                if (abrirConexion)
+                    context.Connection.Close();
+            }
         }
 
         private Asignaciones resuelveAsignacionPedido(
