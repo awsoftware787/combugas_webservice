@@ -544,6 +544,49 @@ namespace ws_combugasclientes.ws
         }
 
         [WebMethod(EnableSession = true)]
+        public ajaxResponse ValidarFechaEntrega()
+        {
+            ajaxResponse Response = new ajaxResponse();
+            var jsonSerializer = new JavaScriptSerializer();
+
+            try
+            {
+                using (ContextCombugasDataContext context = new ContextCombugasDataContext())
+                using (var comando = new System.Data.SqlClient.SqlCommand(
+                    "dbo.sp_ValidarFechaEntrega", (System.Data.SqlClient.SqlConnection)context.Connection))
+                {
+                    comando.CommandType = System.Data.CommandType.StoredProcedure;
+                    comando.Parameters.Add("@Fecha", System.Data.SqlDbType.Date).Value = DateTime.Today;
+                    context.Connection.Open();
+                    using (var resultado = comando.ExecuteReader())
+                    {
+                        if (!resultado.Read())
+                        {
+                            throw new InvalidOperationException("No se obtuvo el resultado de la validacion de entrega.");
+                        }
+
+                        var jsonINFO = jsonSerializer.Serialize(new
+                        {
+                            permite_entrega = Convert.ToBoolean(resultado["permite_entrega"]),
+                            mensaje = resultado["mensaje"] == DBNull.Value ? null : Convert.ToString(resultado["mensaje"])
+                        });
+                        Response.Result = true;
+                        Response.Message = "INFO";
+                        Response.Data = jsonINFO;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var jsonINFO = jsonSerializer.Serialize("ERROR" + ex.Message);
+                Response.Result = false;
+                Response.Message = "ERR500";
+                Response.Data = jsonINFO;
+            }
+            return Response;
+        }
+
+        [WebMethod(EnableSession = true)]
         public ajaxResponse traerInfoCliente(int _intClaveUsuario)
         {
             ajaxResponse Response = new ajaxResponse();
