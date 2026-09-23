@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="combugasCC" Class="ContextCombugasDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="combugasWSConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.montominimo_estacionario" Member="montominimo_estacionario">
+    <Type Name="montominimo_estacionario">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="montominimo_dinero" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="montominimo_litros" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="montominimo_unidades" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="is_multiplo_croquetas" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="valor_multiplo_croquetas" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.Actitudes" Member="Actitudes">
     <Type Name="Actitudes">
       <Column Name="id_actitud" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />

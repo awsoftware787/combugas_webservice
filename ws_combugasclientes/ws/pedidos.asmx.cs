@@ -145,7 +145,10 @@ namespace ws_combugasclientes.ws
                                 select new
                                 {
                                     i.montominimo_dinero,
-                                    i.montominimo_litros
+                                    i.montominimo_litros,
+                                    i.montominimo_unidades,
+                                    i.is_multiplo_croquetas,
+                                    i.valor_multiplo_croquetas
                                 };
 
                 var jsonProd = jsonSerializer.Serialize(resultSQL);

@@ -2334,6 +2334,12 @@ namespace ws_combugasclientes.core
 
 		private double _montominimo_litros;
 
+		private System.Nullable<int> _montominimo_unidades;
+
+		private System.Nullable<bool> _is_multiplo_croquetas;
+
+		private System.Nullable<int> _valor_multiplo_croquetas;
+
 		#region Definiciones de métodos de extensibilidad
 		partial void OnLoaded();
 		partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2344,6 +2350,12 @@ namespace ws_combugasclientes.core
 		partial void Onmontominimo_dineroChanged();
 		partial void Onmontominimo_litrosChanging(double value);
 		partial void Onmontominimo_litrosChanged();
+		partial void Onmontominimo_unidadesChanging(System.Nullable<int> value);
+		partial void Onmontominimo_unidadesChanged();
+		partial void Onis_multiplo_croquetasChanging(System.Nullable<bool> value);
+		partial void Onis_multiplo_croquetasChanged();
+		partial void Onvalor_multiplo_croquetasChanging(System.Nullable<int> value);
+		partial void Onvalor_multiplo_croquetasChanged();
 		#endregion
 
 		public montominimo_estacionario()
@@ -2407,6 +2419,57 @@ namespace ws_combugasclientes.core
 					this._montominimo_litros = value;
 					this.SendPropertyChanged("montominimo_litros");
 					this.Onmontominimo_litrosChanged();
+				}
+			}
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_montominimo_unidades", DbType = "Int")]
+		public System.Nullable<int> montominimo_unidades
+		{
+			get { return this._montominimo_unidades; }
+			set
+			{
+				if (this._montominimo_unidades != value)
+				{
+					this.Onmontominimo_unidadesChanging(value);
+					this.SendPropertyChanging();
+					this._montominimo_unidades = value;
+					this.SendPropertyChanged("montominimo_unidades");
+					this.Onmontominimo_unidadesChanged();
+				}
+			}
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_is_multiplo_croquetas", DbType = "Bit")]
+		public System.Nullable<bool> is_multiplo_croquetas
+		{
+			get { return this._is_multiplo_croquetas; }
+			set
+			{
+				if (this._is_multiplo_croquetas != value)
+				{
+					this.Onis_multiplo_croquetasChanging(value);
+					this.SendPropertyChanging();
+					this._is_multiplo_croquetas = value;
+					this.SendPropertyChanged("is_multiplo_croquetas");
+					this.Onis_multiplo_croquetasChanged();
+				}
+			}
+		}
+
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_valor_multiplo_croquetas", DbType = "Int")]
+		public System.Nullable<int> valor_multiplo_croquetas
+		{
+			get { return this._valor_multiplo_croquetas; }
+			set
+			{
+				if (this._valor_multiplo_croquetas != value)
+				{
+					this.Onvalor_multiplo_croquetasChanging(value);
+					this.SendPropertyChanging();
+					this._valor_multiplo_croquetas = value;
+					this.SendPropertyChanged("valor_multiplo_croquetas");
+					this.Onvalor_multiplo_croquetasChanged();
 				}
 			}
 		}
